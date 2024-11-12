@@ -1,0 +1,34 @@
+# Cette ligne active le module de réécriture d'URL d'Apache. Le module s'appelle mod_rewrite, et il permet de modifier les URL à la volée.
+# Il est nécessaire d'avoir cette directive On pour pouvoir utiliser les règles (RewriteRule) qui suivent.
+RewriteEngine On
+
+# ^$ : Cela correspond à l'URL vide, c'est-à-dire à la racine du site (par exemple, http://mon-site.com sans rien après).
+# public/ : Cela redirige vers le dossier public/.
+# [L] : Cette balise indique que c'est la dernière règle à appliquer si elle correspond (Last). Cela signifie que si cette règle est appliquée, Apache ne continuera pas à vérifier les autres règles.
+# En résumé : Lorsque quelqu'un accède à la racine du site, il est automatiquement redirigé vers le dossier /public.
+# C'est utile pour organiser le code source de façon sécurisée, et garder le fichier d'entrée (index.php) dans le dossier public.
+RewriteRule ^$ public/ [L]
+
+# (.*) : Cela correspond à n'importe quel chemin après la racine (/), et capture ce chemin.
+# public/$1 : Cela redirige tout ce qui est capturé ($1) vers le dossier public/. Par exemple, une requête vers /contact serait redirigée vers /public/contact.
+# [L] : Comme pour la règle précédente, cela indique que cette règle est la dernière à être appliquée pour cette requête si elle correspond.
+# En résumé : Cette règle redirige toutes les requêtes vers le dossier public, en conservant le chemin après la racine.
+RewriteRule (.*) public/$1 [L]
+
+# Utilité de ce fichier .htaccess :
+# Rediriger toutes les requêtes vers le dossier public/ : Cela permet de s'assurer que tout le contenu passe par le dossier public,
+# qui est le seul dossier visible du web. Tout le code source, les configurations, etc., peuvent ainsi être gardés à l'abri
+# dans d'autres dossiers qui ne sont pas accessibles directement.
+
+# Mesure de sécurité :
+# En gardant tout le contenu critique (comme les fichiers de configuration, modèles, contrôleurs) en dehors du dossier public,
+# tu t'assures qu'un utilisateur ne peut pas accéder directement à ces fichiers via le navigateur.
+# Le dossier public sert de point d'entrée pour les requêtes. Le fichier index.php dans le dossier public agit souvent
+# comme un contrôleur frontal qui va router toutes les requêtes vers les bonnes ressources.
+
+# Exemple pratique :
+# Quand un utilisateur tape l'adresse http://mon-site.com :
+# La première règle (^$ public/) va le rediriger vers http://mon-site.com/public/.
+# Quand un utilisateur accède à http://mon-site.com/taches :
+# La deuxième règle ((.*) public/$1) va le rediriger vers http://mon-site.com/public/taches, permettant à index.php de router cette requête.
+# Cela simplifie la gestion des routes tout en gardant ton application plus sécurisée.

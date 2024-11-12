@@ -1,0 +1,20 @@
+# Cela active le moteur de réécriture d'URL d'Apache, nécessaire pour pouvoir utiliser les règles (RewriteRule) qui suivent.
+RewriteEngine On
+
+# Cette condition signifie que la règle suivante ne sera appliquée que si la requête ne correspond pas à un fichier physique existant.
+# %{REQUEST_FILENAME} représente le chemin complet du fichier demandé par l'URL.
+# !-f signifie "n'est pas un fichier".
+# En résumé, cela veut dire que si le fichier demandé n'existe pas physiquement, on applique la règle de réécriture.
+RewriteCond %{REQUEST_FILENAME} !-f
+
+# De manière similaire, cette condition signifie que la règle suivante ne sera appliquée que si la requête ne correspond pas à un dossier physique existant.
+# !-d signifie "n'est pas un dossier".
+# Cela garantit que la réécriture ne s'applique que pour les requêtes qui ne ciblent pas un dossier existant.
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# ^(.*)$ : Cette expression régulière capture tout le chemin de l'URL, quel qu'il soit.
+# index.php?uri=$1 : Cette règle redirige toutes les requêtes vers le fichier index.php avec l'URL d'origine passée en paramètre uri. Par exemple, si l'utilisateur visite /todo-api/lists/1, cela redirigera vers index.php?uri=lists/1.
+# [QSA,L] :
+# - QSA (Query String Append) : Cela signifie que la chaîne de requête d'origine (les paramètres GET, par exemple ?page=1) est conservée et ajoutée à la nouvelle requête.
+# - L (Last) : Cela signifie que cette règle est la dernière à être appliquée. Une fois cette règle exécutée, aucune autre règle ne sera prise en compte pour cette requête.
+RewriteRule ^(.*)$ index.php?uri=$1 [QSA,L]
